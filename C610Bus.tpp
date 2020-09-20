@@ -1,5 +1,5 @@
-#include "C610Bus.h"
 #include "Arduino.h"
+#include "C610Bus.h"
 
 template <CAN_DEV_TABLE _bus>
 C610Bus<_bus>::C610Bus() {
@@ -42,7 +42,7 @@ void C610Bus<_bus>::Callback(const CAN_message_t &msg) {
 template <CAN_DEV_TABLE _bus>
 void C610Bus<_bus>::CommandTorques(const int32_t torque0, const int32_t torque1,
                                    const int32_t torque2, const int32_t torque3,
-                                   const uint8_t subbus) {
+                                   C610Subbus subbus) {
   if (!is_initialized_) {
     Serial.println("Bus must be initialized before use.");
   }
@@ -56,13 +56,12 @@ void C610Bus<_bus>::CommandTorques(const int32_t torque0, const int32_t torque1,
   int16_t t3 = constrain(torque3, -32000, 32000);
 
   CAN_message_t msg;
-  if (subbus == 0) {
+  if (subbus == C610Subbus::kIDZeroToThree) {
     msg.id = kIDZeroToThreeCommandID;
-  } else if (subbus == 1) {
+  } else if (subbus == C610Subbus::kIDFourToSeven) {
     msg.id = kFourToSevenCommandID;
   } else {
-    Serial.print("Invalid ESC subbus: ");
-    Serial.println(subbus);
+    Serial.println("Invalid ESC subbus.");
     return;
   }
   C610::torqueToBytes(t0, msg.buf[0], msg.buf[1]);

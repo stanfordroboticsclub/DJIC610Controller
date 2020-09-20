@@ -5,6 +5,8 @@
 #include <FlexCAN_T4.h>
 #include <Streaming.h>
 
+enum class C610Subbus { kIDZeroToThree, kIDFourToSeven };
+
 template <CAN_DEV_TABLE _bus = CAN1>
 class C610Bus {
  public:
@@ -28,7 +30,7 @@ class C610Bus {
   void Callback(const CAN_message_t &msg);
   void CommandTorques(const int32_t torque0, const int32_t torque1 = 0,
                       const int32_t torque2 = 0, const int32_t torque3 = 0,
-                      const uint8_t subbus = 0);
+                      C610Subbus subbus = 0);
   C610 &Get(const uint8_t i);
 };
 
