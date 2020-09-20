@@ -1,3 +1,6 @@
+#include "C610Bus.h"
+#include "Arduino.h"
+
 template <CAN_DEV_TABLE _bus>
 C610Bus<_bus>::C610Bus() {
   for (uint8_t i = 0; i < SIZE; i++) {
