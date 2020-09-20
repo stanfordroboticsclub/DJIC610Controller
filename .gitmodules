@@ -1,0 +1,3 @@
+[submodule "lib/FlexCAN_T4"]
+	path = lib/FlexCAN_T4
+	url = https://github.com/Nate711/FlexCAN_T4.git
