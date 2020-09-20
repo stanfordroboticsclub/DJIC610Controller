@@ -39,17 +39,17 @@ void C610::updateState(C610Feedback f) {
 
   // Position
   int32_t delta = f.counts - _last_pos_measurement;
-  if (delta > COUNTS_PER_REV /
+  if (delta > kCountsPerRev /
                   2) {  // Crossed from >= 0 counts to <= 8191 counts. Could
                         // also trigger if spinning super fast (>2000rps)
     _rotations -= 1;
   } else if (delta <
-             -COUNTS_PER_REV /
+             -kCountsPerRev /
                  2) {  // Crossed from <= 8191 counts to >= 0 counts. Could
                        // also trigger if spinning super fast (>2000rps)
     _rotations += 1;
   }
-  _counts = _rotations * COUNTS_PER_REV + f.counts;
+  _counts = _rotations * kCountsPerRev + f.counts;
   _last_pos_measurement = f.counts;
 
   // Velocity

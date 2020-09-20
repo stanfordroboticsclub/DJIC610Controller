@@ -17,7 +17,7 @@ class C610 {
   int32_t _torque;
 
  public:
-  static const int32_t COUNTS_PER_REV = 8192;
+  static const int32_t kCountsPerRev = 8192;
 
   static void torqueToBytes(int16_t torque, uint8_t &upper, uint8_t &lower);
   static C610Feedback interpretMessage(const CAN_message_t &msg);
