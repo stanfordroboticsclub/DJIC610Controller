@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include <C610.h>
 #include <FlexCAN_T4.h>
-#include <Streaming.h>
 
 enum class C610Subbus { kIDZeroToThree, kIDFourToSeven };
 

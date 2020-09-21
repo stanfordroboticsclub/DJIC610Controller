@@ -34,7 +34,8 @@ void C610Bus<_bus>::Callback(const CAN_message_t &msg) {
     C610Feedback f = C610::interpretMessage(msg);
     controllers_[esc_index].updateState(f);
   } else {
-    Serial << "Invalid ID for feedback message: " << msg.id << endl;
+    Serial.print("Invalid ID for feedback message: ");
+    Serial.println(msg.id);
     return;
   }
 }
