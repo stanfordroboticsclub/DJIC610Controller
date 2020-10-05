@@ -10,6 +10,12 @@ C610Bus<_bus>::C610Bus() {
 }
 
 template <CAN_DEV_TABLE _bus>
+void C610Bus<_bus>::TorqueToBytes(int16_t torque, uint8_t &upper, uint8_t &lower) {
+  upper = (torque >> 8) & 0xFF;
+  lower = torque & 0xFF;
+}
+
+template <CAN_DEV_TABLE _bus>
 void C610Bus<_bus>::PollCAN() {
   can_.events();
 }
@@ -31,8 +37,8 @@ void C610Bus<_bus>::Callback(const CAN_message_t &msg) {
   if (msg.id >= kReceiveBaseID + 1 && msg.id <= kReceiveBaseID + kSize) {
     uint8_t esc_index =
         msg.id - kReceiveBaseID - 1;  // ESC 1 corresponds to index 0
-    C610Feedback f = C610::interpretMessage(msg);
-    controllers_[esc_index].updateState(f);
+    C610Feedback f = C610::InterpretMessage(msg);
+    controllers_[esc_index].UpdateState(f);
   } else {
     Serial.print("Invalid ID for feedback message: ");
     Serial.println(msg.id);
@@ -65,10 +71,10 @@ void C610Bus<_bus>::CommandTorques(const int32_t torque0, const int32_t torque1,
     Serial.println("Invalid ESC subbus.");
     return;
   }
-  C610::torqueToBytes(t0, msg.buf[0], msg.buf[1]);
-  C610::torqueToBytes(t1, msg.buf[2], msg.buf[3]);
-  C610::torqueToBytes(t2, msg.buf[4], msg.buf[5]);
-  C610::torqueToBytes(t3, msg.buf[6], msg.buf[7]);
+  TorqueToBytes(t0, msg.buf[0], msg.buf[1]);
+  TorqueToBytes(t1, msg.buf[2], msg.buf[3]);
+  TorqueToBytes(t2, msg.buf[4], msg.buf[5]);
+  TorqueToBytes(t3, msg.buf[6], msg.buf[7]);
   can_.write(msg);
 }
 

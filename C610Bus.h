@@ -23,6 +23,8 @@ class C610Bus {
 
   void InitializeCAN();
 
+  static void TorqueToBytes(int16_t torque, uint8_t &upper, uint8_t &lower);
+
  public:
   C610Bus();
   void PollCAN();

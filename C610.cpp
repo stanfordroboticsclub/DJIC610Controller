@@ -2,35 +2,50 @@
 
 #include <FlexCAN_T4.h>
 
+int sign(float val) { return (val > 0) - (val < 0); }
+
 C610::C610() {
   _initialized_mechanical_angle = false;
   _rotations = 0;
   _last_pos_measurement = 0;
   _counts = 0;
   _rpm = 0;
-  _torque = 0;
+  _current = 0;
 }
 
-void C610::torqueToBytes(int16_t torque, uint8_t &upper, uint8_t &lower) {
-  upper = (torque >> 8) & 0xFF;
-  lower = torque & 0xFF;
-}
-
-C610Feedback C610::interpretMessage(const CAN_message_t &msg) {
+C610Feedback C610::InterpretMessage(const CAN_message_t &msg) {
   // See C610 manual for protocol details
   C610Feedback r = {.counts = uint16_t((msg.buf[0] << 8) | msg.buf[1]),
                     .rpm = int16_t((msg.buf[2] << 8) | msg.buf[3]),
-                    .torque = int16_t((msg.buf[4] << 8) | msg.buf[5])};
+                    .current = int16_t((msg.buf[4] << 8) | msg.buf[5])};
   return r;
 }
 
-int32_t C610::counts() { return _counts; }
+float C610::Position() { return _counts / kCountsPerRad; }
 
-int32_t C610::rpm() { return _rpm; }
+float C610::Velocity() { return _rpm / kRPMPerRadS; }
 
-int32_t C610::torque() { return _torque; }
+float C610::ElectricalPower() {
+  return Current() * Current() * kResistance + kVoltageConstant * Velocity() * Current();
+}
 
-void C610::updateState(C610Feedback f) {
+// backdriving: torque = -67.297289572517 [mNm] + -2.769829798378095 * w[rad/s] + 0.30812359545248624 * i[mA]
+// forward: torque = -13.649400446367881 [mNm] + -4.94437013621672 * w[rad/s] + 0.17862214298313905 * i[mA]
+float C610::Torque() {
+  if (_rpm * _current > 0) {
+    return -0.0673 * sign(Velocity()) - 0.00277 * Velocity() + 0.000308 * _current;
+  } else {
+    return -0.0136 * sign(Velocity()) - 0.00494 * Velocity() + 0.000179 * _current;
+  }
+}
+
+float C610::MechanicalPower() {
+  return Torque() * Velocity();
+}
+
+float C610::Current() { return _current / kMilliAmpPerAmp; }
+
+void C610::UpdateState(C610Feedback f) {
   // Initial setup
   if (!_initialized_mechanical_angle) {
     _initialized_mechanical_angle = true;
@@ -56,5 +71,5 @@ void C610::updateState(C610Feedback f) {
   _rpm = f.rpm;
 
   // Torque
-  _torque = f.torque;
+  _current = f.current;
 }

@@ -4,8 +4,9 @@
 #include <FlexCAN_T4.h>
 
 struct C610Feedback {
-  int32_t counts, rpm, torque;
+  int32_t counts, rpm, current;
 };
+
 
 class C610 {
  private:
@@ -14,17 +15,30 @@ class C610 {
   int32_t _last_pos_measurement;
   int32_t _counts;
   int32_t _rpm;
-  int32_t _torque;
+  int32_t _current;
+
+
+  // Constants specific to the C610 + M2006 setup.
+  static const int32_t kCountsPerRev = 8192;
+  static constexpr float kReduction = 36.0F;
+  static constexpr float kCountsPerRad = kCountsPerRev * kReduction / (2 * M_PI);
+  static constexpr float kRPMPerRadS = kReduction * 2.0F * M_PI / 60.0F;
+  static constexpr float kMilliAmpPerAmp = 1000.0F;
+
+  static constexpr float kResistance = 0.100;
+  static constexpr float kVoltageConstant = 100.0;
 
  public:
-  static const int32_t kCountsPerRev = 8192;
-
-  static void torqueToBytes(int16_t torque, uint8_t &upper, uint8_t &lower);
-  static C610Feedback interpretMessage(const CAN_message_t &msg);
+  static C610Feedback InterpretMessage(const CAN_message_t &msg);
 
   C610();
-  void updateState(C610Feedback feedback);
-  int32_t counts();
-  int32_t rpm();
-  int32_t torque();
+  void UpdateState(C610Feedback feedback);
+  float Position(); // output [rad]
+  float Velocity(); // output [rad/s]
+  float Current(); // [mA]
+  float Torque(); // output [Nm]
+  // Return the electrical power: Pe = i^2 * R + kv * w * i
+  float ElectricalPower();
+  // Return the mechanical power: Pm = tau(i) * w
+  float MechanicalPower();
 };
