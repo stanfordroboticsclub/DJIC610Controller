@@ -2,7 +2,9 @@
 
 #include <FlexCAN_T4.h>
 
-int sign(float val) { return (val > 0) - (val < 0); }
+namespace C610Helper {
+  int sign(float val) { return (val > 0) - (val < 0); }
+}
 
 C610::C610() {
   _initialized_mechanical_angle = false;
@@ -33,9 +35,9 @@ float C610::ElectricalPower() {
 // forward: torque = -13.649400446367881 [mNm] + -4.94437013621672 * w[rad/s] + 0.17862214298313905 * i[mA]
 float C610::Torque() {
   if (_rpm * _current > 0) {
-    return -0.0673 * sign(Velocity()) - 0.00277 * Velocity() + 0.000308 * _current;
+    return -0.0673 * C610Helper::sign(Velocity()) - 0.00277 * Velocity() + 0.000308 * _current;
   } else {
-    return -0.0136 * sign(Velocity()) - 0.00494 * Velocity() + 0.000179 * _current;
+    return -0.0136 * C610Helper::sign(Velocity()) - 0.00494 * Velocity() + 0.000179 * _current;
   }
 }
 
