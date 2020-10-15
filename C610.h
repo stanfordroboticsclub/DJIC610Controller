@@ -22,7 +22,7 @@ class C610 {
   static const int32_t kCountsPerRev = 8192;
   static constexpr float kReduction = 36.0F;
   static constexpr float kCountsPerRad = kCountsPerRev * kReduction / (2 * M_PI);
-  static constexpr float kRPMPerRadS = kReduction * 2.0F * M_PI / 60.0F;
+  static constexpr float kRPMPerRadS = kReduction * 60 / (2.0F * M_PI);
   static constexpr float kMilliAmpPerAmp = 1000.0F;
 
   static constexpr float kResistance = 0.100;
