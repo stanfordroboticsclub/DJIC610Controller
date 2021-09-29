@@ -53,8 +53,9 @@ void C610Bus<_bus>::CommandTorques(const int32_t torque0, const int32_t torque1,
   if (!is_initialized_) {
     Serial.println("Bus must be initialized before use.");
   }
-  // IDs 0 through 3 go on ID 0x200
-  // IDs 4 through 7 go on ID 0x1FF
+  // Assuming one-indexed IDs:
+  // IDs 1 through 4 go on ID 0x200
+  // IDs 5 through 8 go on ID 0x1FF
 
   int16_t t0 =
       constrain(torque0, -32000, 32000);  // prevent overflow of int16_t
@@ -63,10 +64,10 @@ void C610Bus<_bus>::CommandTorques(const int32_t torque0, const int32_t torque1,
   int16_t t3 = constrain(torque3, -32000, 32000);
 
   CAN_message_t msg;
-  if (subbus == C610Subbus::kIDZeroToThree) {
-    msg.id = kIDZeroToThreeCommandID;
-  } else if (subbus == C610Subbus::kIDFourToSeven) {
-    msg.id = kFourToSevenCommandID;
+  if (subbus == C610Subbus::kOneToFourBlinks) {
+    msg.id = kOneToFourBlinksCommandID;
+  } else if (subbus == C610Subbus::kFiveToEightBlinks) {
+    msg.id = kFiveToEightBlinksCommandID;
   } else {
     Serial.println("Invalid ESC subbus.");
     return;

@@ -4,7 +4,7 @@
 #include <C610.h>
 #include <FlexCAN_T4.h>
 
-enum class C610Subbus { kIDZeroToThree, kIDFourToSeven };
+enum class C610Subbus { kOneToFourBlinks, kFiveToEightBlinks };
 
 template <CAN_DEV_TABLE _bus = CAN1>
 class C610Bus {
@@ -12,8 +12,8 @@ class C610Bus {
   static const uint8_t kSize = 8;
 
  private:
-  static const uint32_t kIDZeroToThreeCommandID = 0x200;
-  static const uint32_t kFourToSevenCommandID = 0x1FF;
+  static const uint32_t kOneToFourBlinksCommandID = 0x200;
+  static const uint32_t kFiveToEightBlinksCommandID = 0x1FF;
   static const uint32_t kReceiveBaseID = 0x200;
   static const uint32_t kCountsPerRev = 8192;
 

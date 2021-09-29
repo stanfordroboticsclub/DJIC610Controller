@@ -30,8 +30,8 @@ void loop()
     if (now - last_command >= 10) // Loop at 100Hz. You should limit the rate at which you call CommandTorques to <1kHz to avoid saturating the CAN bus bandwidth
     {
         // These lines will cause the motors to turn. Make sure they are mounted safely. 
-        bus.CommandTorques(100, 200, 300, 400, C610Subbus::kIDZeroToThree);      // Command 100mA to motor 1, 200ma to motor 2, etc. The last parameter specifies to command the motors with IDs 1-4
-        bus.CommandTorques(500, 600, 700, 800, C610Subbus::kIDFourToSeven);      // Command 500mA to motor 5, 600ma to motor 6, etc. The last parameter specifies to command the motors with IDs 5-8.
+        bus.CommandTorques(100, 200, 300, 400, C610Subbus::kOneToFourBlinks);      // Command 100mA to motor 1, 200ma to motor 2, etc. The last parameter specifies to command the motors with IDs 1-4
+        bus.CommandTorques(500, 600, 700, 800, C610Subbus::kFiveToEightBlinks);      // Command 500mA to motor 5, 600ma to motor 6, etc. The last parameter specifies to command the motors with IDs 5-8.
         float m0_pos = bus.Get(0).Position(); // Get the shaft position of motor 0 in radians.
         float m1_vel = bus.Get(1).Velocity(); // Get the shaft velocity of motor 1 in radians/sec.
         float m2_current = bus.Get(2).Current(); // Get the current estimate of motor 2 in amps.
